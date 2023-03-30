@@ -1,0 +1,12 @@
+.number-input-style::-webkit-outer-spin-button,
+.number-input-style::-webkit-inner-spin-button {
+	appearance: none;
+}
+
+.number-input-style[type='number'] {
+	-moz-appearance: textfield;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
