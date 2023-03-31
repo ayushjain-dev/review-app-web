@@ -14,12 +14,33 @@ export function VerifyOtp() {
 	const [otp, setOtp] = useState(new Array(otpLength).fill(''));
 
 	// function
-	const handleOtpChange = ({ target }, i) => {
+	const focusPreviousField = (index) => {
+		const prevIndex = index - 1 !== 0 ? index - 1 : 0;
+		otp[prevIndex] = '';
+		setOtp([...otp]);
+		setActiveOtpIndex(prevIndex);
+	};
+	const focusNextInputField = (index) => {
+		setActiveOtpIndex(index + 1);
+	};
+
+	const handleOtpChange = ({ target }, index) => {
 		const { value } = target;
-		const renderOtp = [...otp];
-		renderOtp[i] = value.substring(0, 1);
-		setOtp([...renderOtp]);
-		setActiveOtpIndex(i + 1);
+		otp[index] = value.substring(0, 1);
+		setOtp([...otp]);
+		if (!value) focusPreviousField(index);
+		else focusNextInputField(index);
+	};
+
+	const handleKeyDown = ({ key }, index) => {
+		if (key === 'Backspace') {
+			if (otp[index] === '') focusPreviousField(index);
+			else {
+				otp[index] = '';
+				setOtp([...otp]);
+				setActiveOtpIndex(index);
+			}
+		}
 	};
 
 	// hooks
@@ -36,15 +57,16 @@ export function VerifyOtp() {
 						<p className="text-darkSubtle text-center text-sm">OTP has been sent to your email</p>
 					</div>
 					<div className="flex justify-evenly space-x-5">
-						{otp.map((num, i) => {
+						{otp.map((num, index) => {
 							return (
 								<Text
-									inputRef={activeOtpIndex === i ? inputRef : null}
-									onChange={(e) => handleOtpChange(e, i)}
-									value={otp[i] || ''}
-									type="number"
-									className="w-9 h-9 bg-transparent text-center font-semibold number-input-style"
-									key={i}
+									type="otp"
+									value={otp[index] || ''}
+									onChange={(e) => handleOtpChange(e, index)}
+									onKeyDown={(e) => handleKeyDown(e, index)}
+									inputRef={activeOtpIndex === index ? inputRef : null}
+									key={index}
+									className="w-9 h-9 bg-transparent text-center font-semibold"
 								/>
 							);
 						})}
